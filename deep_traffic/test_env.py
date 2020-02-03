@@ -276,3 +276,6 @@ class TestDeepTraffic(unittest.TestCase):
         np.testing.assert_array_equal(r[10:14], 0.0)
         np.testing.assert_array_equal(r[14], 1.0)
         np.testing.assert_array_equal(r[15:19], 0.0)
+
+if __name__ == '__main__':
+    unittest.main()
