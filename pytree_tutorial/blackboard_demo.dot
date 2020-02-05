@@ -1,0 +1,23 @@
+digraph pastafarianism {
+graph [fontname="times-roman"];
+node [fontname="times-roman"];
+edge [fontname="times-roman"];
+"Blackboard Demo" [fillcolor=orange, fontcolor=black, fontsize=9, label="Blackboard Demo", shape=box, style=filled];
+"Set Nested" [fillcolor=gray, fontcolor=black, fontsize=9, label="Set Nested", shape=ellipse, style=filled];
+"Blackboard Demo" -> "Set Nested";
+Writer [fillcolor=gray, fontcolor=black, fontsize=9, label=Writer, shape=ellipse, style=filled];
+"Blackboard Demo" -> Writer;
+"Check Nested Foo" [fillcolor=gray, fontcolor=black, fontsize=9, label="Check Nested Foo", shape=ellipse, style=filled];
+"Blackboard Demo" -> "Check Nested Foo";
+ParamsAndState [fillcolor=gray, fontcolor=black, fontsize=9, label=ParamsAndState, shape=ellipse, style=filled];
+"Blackboard Demo" -> ParamsAndState;
+subgraph  {
+label="children_of_Blackboard Demo";
+rank=same;
+"Set Nested" [fillcolor=gray, fontcolor=black, fontsize=9, label="Set Nested", shape=ellipse, style=filled];
+Writer [fillcolor=gray, fontcolor=black, fontsize=9, label=Writer, shape=ellipse, style=filled];
+"Check Nested Foo" [fillcolor=gray, fontcolor=black, fontsize=9, label="Check Nested Foo", shape=ellipse, style=filled];
+ParamsAndState [fillcolor=gray, fontcolor=black, fontsize=9, label=ParamsAndState, shape=ellipse, style=filled];
+}
+
+}
