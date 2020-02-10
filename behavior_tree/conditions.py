@@ -58,7 +58,7 @@ class ConditionChecker:
         if self.car_in_range(self.cell_x + 1, self.cell_y - self.switch_lane_safety_front - 1, self.cell_y - 1):
             return True
         if self.car_in_range(self.cell_x + 1, self.cell_y + self.car_length, self.cell_y + self.car_length + self.safety_front/2):
-        return False
+            return False
     
     def car_in_cell(self, cell_x, cell_y):
         if self.state[cell_x, cell_y] != 1:
