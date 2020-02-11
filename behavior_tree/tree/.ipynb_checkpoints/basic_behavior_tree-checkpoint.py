@@ -11,7 +11,9 @@ class CanAccelerate(py_trees.behaviour.Behaviour):
     
     def update(self):
         if self.condition_checker.can_accelerate():
+            self.blackboard.condition.CanAccelerate = True
             return py_trees.common.Status.SUCCESS
+        self.blackboard.condition.CanAccelerate = False
         return py_trees.common.Status.FAILURE
 
     
@@ -20,12 +22,14 @@ class CanSwitchLeft(py_trees.behaviour.Behaviour):
     def __init__(self, condition_checker):
         super().__init__(name="CanSwitchLeft")
         self.blackboard = self.attach_blackboard_client(name=self.name)
-        self.blackboard.register_key("condition/CanSwichLeft", access=py_trees.common.Access.WRITE)
+        self.blackboard.register_key("condition/CanSwitchLeft", access=py_trees.common.Access.WRITE)
         self.condition_checker = condition_checker
     
     def update(self):
         if self.condition_checker.can_switch_left():
+            self.blackboard.condition.CanSwitchLeft = True
             return py_trees.common.Status.SUCCESS
+        self.blackboard.condition.CanSwitchLeft = False
         return py_trees.common.Status.FAILURE
 
 
@@ -39,7 +43,9 @@ class CanSwitchRight(py_trees.behaviour.Behaviour):
     
     def update(self):
         if self.condition_checker.can_switch_right():
+            self.blackboard.condition.CanSwitchRight = True
             return py_trees.common.Status.SUCCESS
+        self.blackboard.condition.CanSwitchRight = False
         return py_trees.common.Status.FAILURE
 
 
@@ -57,7 +63,7 @@ class Accelerate(py_trees.behaviour.Behaviour):
             return py_trees.common.Status.FAILURE
         self.blackboard.action = "accelerate"
         self.blackboard.action_num = 1
-        return py_trees.common.Status.RUNNING
+        return py_trees.common.Status.SUCCESS
 
     
 class SwitchLeft(py_trees.behaviour.Behaviour):
@@ -74,7 +80,7 @@ class SwitchLeft(py_trees.behaviour.Behaviour):
             return py_trees.common.Status.FAILURE
         self.blackboard.action = "goLeft"
         self.blackboard.action_num = 3
-        return py_trees.common.Status.RUNNING
+        return py_trees.common.Status.SUCCESS
     
 
 class SwitchRight(py_trees.behaviour.Behaviour):
@@ -91,7 +97,7 @@ class SwitchRight(py_trees.behaviour.Behaviour):
             return py_trees.common.Status.FAILURE
         self.blackboard.action = "goRight"
         self.blackboard.action_num = 4
-        return py_trees.common.Status.RUNNING
+        return py_trees.common.Status.SUCCESS
     
 
 class NoAction(py_trees.behaviour.Behaviour):
@@ -112,7 +118,7 @@ class NoAction(py_trees.behaviour.Behaviour):
             return py_trees.common.Status.FAILURE
         self.blackboard.action = "noAction"
         self.blackboard.action_num = 0
-        return py_trees.common.Status.RUNNING
+        return py_trees.common.Status.SUCCESS
     
 
 def create_basic_behavior_tree(condition_checker, name="Planner"):

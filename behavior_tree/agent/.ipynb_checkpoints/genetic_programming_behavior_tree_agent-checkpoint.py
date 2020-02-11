@@ -1,4 +1,5 @@
-from behavior_tree.agent import BehaviorTreeAgent
+from behavior_tree.agent.behavior_tree_agent import BehaviorTreeAgent
+from behavior_tree.tree.genetic_programming_behavior_tree import create_genetic_programming_behavior_tree
 
 
 class GeneticProgrammingBehaviorTreeAgent(BehaviorTreeAgent):
@@ -6,10 +7,16 @@ class GeneticProgrammingBehaviorTreeAgent(BehaviorTreeAgent):
     def __init__(self):
         pass
     
-    def select_action(self):
+    def get_action(self):
+        pass
+    
+    def get_action_num(self):
         pass
     
     def tick(self):
+        pass
+    
+    def setup(self):
         pass
     
     @property

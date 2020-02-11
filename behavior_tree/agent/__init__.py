@@ -1,1 +1,2 @@
 from behavior_tree.agent.basic_behavior_tree_agent import BasicBehaviorTreeAgent
+from behavior_tree.agent.genetic_programming_behavior_tree_agent import GeneticProgrammingBehaviorTreeAgent
