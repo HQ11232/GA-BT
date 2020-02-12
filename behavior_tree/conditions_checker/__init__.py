@@ -1,1 +1,2 @@
 from behavior_tree.conditions_checker.basic_conditions_checker import BasicConditionChecker
+from behavior_tree.conditions_checker.genetic_programming_conditions_checker import GeneticProgrammingConditionChecker

@@ -55,8 +55,13 @@ class BasicConditionChecker(ConditionChecker):
             return True
         return False
     
+    def free_in_cell(self, cell_x, cell_y):
+        if int(self.state[cell_x, cell_y]) == 1:
+            return True
+        return False
+    
     def car_in_cell(self, cell_x, cell_y):
-        if self.state[cell_x, cell_y] != 1:
+        if (int(self.state[cell_x, cell_y] != 1)) and (int(self.state[cell_x, cell_y] != 0)):
             return True
         return False
     
