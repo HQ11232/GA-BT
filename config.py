@@ -8,6 +8,10 @@ OBS = 'conv'
 # BasicConditionChecker
 SWITCH_LANE_SAFETY_FRONT = 4
 
+# GP-Tree
+MIN_SAFETY_SPEED = 20
+SAFETY_ACTION = 'accelerate'
+
 # Runner
 PLAY_EPISODE_STEPS = 200
 PLAY_EPISODE_SLEEP_TIME = 0.5
