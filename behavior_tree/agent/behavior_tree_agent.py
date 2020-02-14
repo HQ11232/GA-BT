@@ -7,19 +7,15 @@ class BehaviorTreeAgent:
         pass
 
     @abstractmethod
-    def get_action(self):
+    def setup(self):
         pass
     
     @abstractmethod
-    def get_action_num(self):
+    def reset(self):
         pass
     
     @abstractmethod
     def tick(self):
-        pass
-    
-    @abstractmethod
-    def setup(self):
         pass
     
     @abstractproperty

@@ -1,1 +1,0 @@
-from behavior_tree.conditions_checker.basic_conditions_checker import BasicConditionChecker
