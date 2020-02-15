@@ -100,7 +100,7 @@ def create_condition_sequence(free_cell_conditions, cond_index):
     return conditions_sequence
     
     
-def create_genetic_programming_behavior_tree():
+def GeneticProgrammingBehaviorTree():
     # create initial root
     init_root = create_initial_root()
     

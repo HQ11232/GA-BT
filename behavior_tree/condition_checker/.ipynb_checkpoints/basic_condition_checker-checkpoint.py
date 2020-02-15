@@ -1,12 +1,11 @@
-from behavior_tree.conditions_checker.conditions_checker import ConditionChecker
+from behavior_tree.condition_checker import ConditionChecker
 from config import *
 
 
 class BasicConditionChecker(ConditionChecker):
     """Condition Checker for BT agent with handcrafted rules"""
-    def __init__(self, env):
-        super().__init__(env)
-        self.switch_lane_safety_front = SWITCH_LANE_SAFETY_FRONT
+    def __init__(self):
+        super().__init__()
     
     def can_accelerate(self):
         """Conditions lead to [acceleration]"""
@@ -41,27 +40,18 @@ class BasicConditionChecker(ConditionChecker):
     
     def car_at_left(self):
         """Condition: any car to the left (including safety range)"""
-        if self.car_in_range(self.cell_x - 1, self.cell_y - self.switch_lane_safety_front - 1, self.cell_y - 1):
-            return True
-        if self.car_in_range(self.cell_x - 1, self.cell_y + self.car_length, self.cell_y + self.car_length + int(self.safety_front/2)):
+        if self.car_in_range(self.cell_x - 1, self.cell_y - self.switch_lane_safety_front - 1, self.cell_y + self.car_length):
             return True
         return False
     
     def car_at_right(self):
         """Condition: any car to the right (including safety range)"""
-        if self.car_in_range(self.cell_x + 1, self.cell_y - self.switch_lane_safety_front - 1, self.cell_y - 1):
-            return True
-        if self.car_in_range(self.cell_x + 1, self.cell_y + self.car_length, self.cell_y + self.car_length + int(self.safety_front/2)):
-            return True
-        return False
-    
-    def free_in_cell(self, cell_x, cell_y):
-        if int(self.state[cell_x, cell_y]) == 1:
+        if self.car_in_range(self.cell_x + 1, self.cell_y - self.switch_lane_safety_front - 1, self.cell_y + self.car_length):
             return True
         return False
     
     def car_in_cell(self, cell_x, cell_y):
-        if (int(self.state[cell_x, cell_y] != 1)) and (int(self.state[cell_x, cell_y] != 0)):
+        if self.state[cell_x, cell_y] != 1:
             return True
         return False
     

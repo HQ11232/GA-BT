@@ -1,2 +1,2 @@
-from behavior_tree.tree.basic_behavior_tree import create_basic_behavior_tree
-from behavior_tree.tree.genetic_programming_behavior_tree import create_genetic_programming_behavior_tree
+from behavior_tree.tree.basic_behavior_tree import BasicBehaviorTree
+from behavior_tree.tree.genetic_programming_behavior_tree import GeneticProgrammingBehaviorTree

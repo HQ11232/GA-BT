@@ -3,38 +3,49 @@ import py_trees
 import time
 import sys
 from config import *
+from utils import visualize
 
 
 def play_episode(e, agent, steps=PLAY_EPISODE_STEPS,
-                 debug=False, verbose=False, sleep_time=PLAY_EPISODE_SLEEP_TIME):
-    """Play one episode, agent should be linked to environment beforehand"""
-    assert agent.condition_checker._env is e, "agent is looking at different env"
-    
+                 debug=False, verbose=False, interactive=False,
+                 sleep_time=PLAY_EPISODE_SLEEP_TIME,
+                 change_act_sleep_time=CHANGE_ACT_SLEEP_TIME):
+    """play one episode, return average speed"""  
     # initilize
-    _ = e.reset()
     agent.setup()
+    state = e.reset()
     speed_hist = []
+    prev_action = ACT_NOACTION
     
     if debug:
-        py_trees.logging.level = py_trees.logging.Level.DEBUG
+        py_trees.logging.level = py_trees.logging.Level.DEBUG  
+    
+    if verbose:
+        print("Step: 0")
+        visualize(e, full=False)
 
-    for _ in range(steps):
+    for step in range(steps):
         # append speed
         speed_hist.append(e.current_speed())
 
         # tick
-        agent.tick()
-        action = agent.get_action()
-        action_num = agent.get_action_num()
-
+        act_idx = agent.tick(state[0])
+        action = agent._get_action()
+        
         # step
-        _, reward, _, _ = e.step(action_num)
+        state, reward, _, _ = e.step(act_idx)
         
         if verbose:
             occ = e.state.render_occupancy(full=False)
-            print(occ.T)
+            print("Step:", step)
+            if (action != prev_action):
+                print("action change: {} -> {}".format(prev_action, action))
+                prev_action = action
+                time.sleep(change_act_sleep_time)
             print(action, e.state.my_car.safe_speed, e.state.my_car.cell_x)
-            print('reward:', reward)
+            print('Reward:', reward)
+            visualize(e, full=False)
+            print('*' * 50 + '\n')
             time.sleep(sleep_time)
             sys.stdout.flush()
     
