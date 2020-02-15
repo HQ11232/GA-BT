@@ -88,8 +88,9 @@ def create_initial_root():
     return init_root
 
 
-def create_condition_sequence(free_cell_conditions, cond_index):
+def ConditionSequenceNode(free_cell_conditions, cond_index):
     """Create SequenceNode of FreeCellConditionNodes according to current free cell conditions"""
+    assert isinstance(free_cell_conditions, dict), "free cell conditions should be accessed from blackboard"
     conditions_sequence = py_trees.composites.Sequence(name="Cond{}".format(cond_index))
     for cell_index, free_cell in free_cell_conditions.items():
         if free_cell:
@@ -98,6 +99,12 @@ def create_condition_sequence(free_cell_conditions, cond_index):
             conditions_sequence.add_child(FalseFreeCellCondition(name=str(cell_index)))
     
     return conditions_sequence
+
+
+def IntersectConditionSequenceNode(node1, node2):
+    """Create new SequenceNode contains intersection of FreeCellConditions from two ConditionSequenceNodes"""
+    assert isinstance(node1, ConditionSequenceNode) and isinstance(node2, ConditionSequenceNode), "given node(s) is not an instance of ConditionSequenceNode"
+    raise NotImplementedError
     
     
 def GeneticProgrammingBehaviorTree():
@@ -116,6 +123,5 @@ def GeneticProgrammingBehaviorTree():
     root.blackboard.cell_condition = {}
     
     tree = py_trees.trees.BehaviourTree(root)
-    
     return tree
     

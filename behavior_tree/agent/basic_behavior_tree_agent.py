@@ -15,7 +15,7 @@ class BasicBehaviorTreeAgent(BehaviorTreeAgent):
         return
     
     def reset(self):
-        pass
+        raise NotImplementedError
     
     def tick(self, state):
         # update ConditionChecker state
@@ -33,6 +33,14 @@ class BasicBehaviorTreeAgent(BehaviorTreeAgent):
         self.blackboard.condition.CanAccelerate = self.condition_checker.can_accelerate()
         self.blackboard.condition.CanSwitchLeft = self.condition_checker.can_switch_left()
         self.blackboard.condition.CanSwitchRight = self.condition_checker.can_switch_right()
+        return
+    
+    def display_blackboard(self):
+        print(self.blackboard)
+        return
+    
+    def display_tree(self):
+        print(py_trees.display.ascii_tree(self.tree.root))
         return
     
     def _get_action(self):

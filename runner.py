@@ -50,3 +50,7 @@ def play_episode(e, agent, steps=PLAY_EPISODE_STEPS,
             sys.stdout.flush()
     
     return np.mean(speed_hist)
+
+
+def train_gp():
+    pass
