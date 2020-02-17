@@ -25,8 +25,8 @@ class BasicBehaviorTreeAgent(BehaviorTreeAgent):
         # tick behavior tree
         self.tree.tick()
         # get action index
-        act_idx = self._get_action_idx()
-        return act_idx
+        action = self.get_action()
+        return action
     
     def update_blackboard(self):
         """write conditions onto blackboard"""
@@ -43,11 +43,8 @@ class BasicBehaviorTreeAgent(BehaviorTreeAgent):
         print(py_trees.display.ascii_tree(self.tree.root))
         return
     
-    def _get_action(self):
+    def get_action(self):
         return self.blackboard.action
-    
-    def _get_action_idx(self):
-        return ACT_TO_ACTIDX[self._get_action()]
     
     @property
     def blackboard(self):

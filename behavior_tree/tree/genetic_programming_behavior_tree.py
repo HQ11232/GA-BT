@@ -67,7 +67,7 @@ class LearnAct(py_trees.behaviour.Behaviour):
         
     def update(self):
         if ENABLE_LEARNING:
-            self.blackboard.action = 'LearnAction'
+            self.blackboard.action = ACT_LEARN
             return py_trees.common.Status.SUCCESS
         return py_trees.common.Status.FAILURE
 
@@ -101,10 +101,18 @@ def ConditionSequenceNode(free_cell_conditions, cond_index):
     return conditions_sequence
 
 
-def IntersectConditionSequenceNode(node1, node2):
+def IntersectConditionSequenceNode(new_node, existed_node):
     """Create new SequenceNode contains intersection of FreeCellConditions from two ConditionSequenceNodes"""
-    assert isinstance(node1, ConditionSequenceNode) and isinstance(node2, ConditionSequenceNode), "given node(s) is not an instance of ConditionSequenceNode"
-    raise NotImplementedError
+    # get all condition names of the new node
+    new_cond_names = set([child.name for child in new_node.children])
+    
+    # create new list for only non-intersected child
+    new_children = [child for child in existed_node.children if child.name in new_cond_names]
+    
+    # replace existed children with a new set
+    existed_node.children = new_children
+    
+    return existed_node
     
     
 def GeneticProgrammingBehaviorTree():
