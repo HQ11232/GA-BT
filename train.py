@@ -25,7 +25,8 @@ def train_GP_BT(e, agent, episodes=100, steps=200):
                 action_node = learn_single_action(e, agent, step)
                 # switch to GP is no action is learned
                 if len(action.children) == 0:
-                    action_node = learn_action_using_GP(e, agent, step)
+                    #action_node = learn_action_using_GP(e, agent, step)
+                    pass
                 
                 # simplify duplicate action
                 action_node_key = hash_action_node(action_node)
@@ -49,22 +50,23 @@ def learn_single_action(e, agent, current_step, samples=30):
     # try each action for multiple episodes
     for action in ACT_TO_ACTIDX:
         act_score = 0
-        for sample in samples:
+        for sample in range(samples):
             # deep copy agent and env
             e_ = copy.deepcopy(e)
-            agent_ = copy.deepcopy(agent)
             
             # try action
             state, _, _, _ = e_.step(ACT_TO_ACTIDX[action])
             
             # simulate, calculate score in Monte-Carlo fashion
-            mean_speed = play_episode(e, agent, steps=PLAY_EPISODE_STEPS - current_step, reset=False, init_state=state)
+            mean_speed = play_episode(e_, agent, steps=PLAY_EPISODE_STEPS - current_step, reset=False, init_state=state)
             act_score += mean_speed
         act_score /= samples
         action_score[action] = act_score
-    pass
+    
+    action_list = [key for key, value in sorted(action_score.items(), key=lambda item: item[1])]
+    action_node = ActionSelectorNode(action_list)
+    return action_node
             
-
 
 def learn_action_using_GP(e, agent, current_step):
     pass
@@ -78,3 +80,4 @@ def hash_action_node(action_node):
         key += action.name + '_'
     key = key[:-1]  # get rid of the last '_'
     return key
+    

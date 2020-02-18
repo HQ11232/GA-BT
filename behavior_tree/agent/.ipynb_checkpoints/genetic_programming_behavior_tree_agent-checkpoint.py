@@ -19,7 +19,7 @@ class GeneticProgrammingBehaviorTreeAgent(BehaviorTreeAgent):
     def reset(self):
         raise NotImplementedError
     
-    def tick(self):
+    def tick(self, state):
         # update ConditionChecker state
         self.update_condition_checker(state)
         # update blackboard

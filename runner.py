@@ -34,7 +34,7 @@ def play_episode(e, agent, steps=PLAY_EPISODE_STEPS,
 
         # tick
         action = agent.tick(state[0])
-        act_idx = ACT_TO_ACTIDX(action)
+        act_idx = ACT_TO_ACTIDX[action]
         
         # step
         state, reward, _, _ = e.step(act_idx)

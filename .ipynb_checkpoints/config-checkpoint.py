@@ -10,6 +10,7 @@ SPEED_FACTOR = 2000  # SPEED_FACTOR * state_value = real_speed
 # ConditionChecker
 SAFETY_FRONT = 4
 SWITCH_LANE_SAFETY_FRONT = 5
+MIN_SAFETY_SPEED = 20
 
 
 # BehaviorTree
@@ -19,6 +20,7 @@ ACT_DECELERATE = "decelerate"
 ACT_SWITCHLEFT = "goLeft"
 ACT_SWITCHRIGHT = "goRight"
 ACT_LEARN = "learnAction"
+ENABLE_LEARNING = True
 
 
 # Agent

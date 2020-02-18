@@ -72,6 +72,17 @@ class LearnAct(py_trees.behaviour.Behaviour):
         return py_trees.common.Status.FAILURE
 
 
+class CustomActionNode(py_trees.behaviour.Behaviour):
+    def __init__(self, name):
+        super().__init__(name)
+        self.blackboard = self.attach_blackboard_client(name=self.name)
+        self.blackboard.register_key("action", access=py_trees.common.Access.WRITE)
+    
+    def update(self):
+        self.blackboard.action = self.name
+        return py_tree.common.Status.SUCCESS
+
+
 def create_safety_node():
     """SafetyNode composes of Safety Condition and Safety Act leaves"""
     node = py_trees.composites.Sequence(name="SafetyNode")
@@ -81,8 +92,8 @@ def create_safety_node():
 
 
 def create_initial_root():
-    """Initial root includes a Sequence of SafetyNode and LearnNode"""
-    init_root = py_trees.composites.Sequence(name="InitRoot")
+    """Initial root includes a Selector of SafetyNode and LearnNode"""
+    init_root = py_trees.composites.Selector(name="InitRoot")
     init_root.add_child(create_safety_node())
     init_root.add_child(LearnAct(name='LearnAct'))
     return init_root
@@ -99,6 +110,15 @@ def ConditionSequenceNode(free_cell_conditions, cond_index):
             conditions_sequence.add_child(FalseFreeCellCondition(name=str(cell_index)))
     
     return conditions_sequence
+
+
+def ActionSelectorNode(action_list):
+    action_selector = py_trees.composites.Selector()
+    if len(action_list) == 0:
+        return action_selector
+    for action in action_list:
+        action_selector.add_child(CustomActionNode(name=action))
+    return action_selector
 
 
 def IntersectConditionSequenceNode(new_node, existed_node):
