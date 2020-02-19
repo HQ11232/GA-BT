@@ -7,22 +7,21 @@ from utils import visualize
 
 
 def play_episode(e, agent, steps=PLAY_EPISODE_STEPS,
-                 reset=True, init_state=None,
-                 debug=False, verbose=False,
+                 reset=True, debug=False, verbose=False,
                  sleep_time=PLAY_EPISODE_SLEEP_TIME,
                  change_act_sleep_time=CHANGE_ACT_SLEEP_TIME):
     """play one episode, return average speed"""  
     # initilize
     if reset:
-        agent.setup()
         state = e.reset()
+        agent.setup()
         prev_action = ACT_NOACTION
     else:
-        state = init_state
+        state = e._render_state(e.state)
     
     if debug:
-        py_trees.logging.level = py_trees.logging.Level.DEBUG  
-    
+        py_trees.logging.level = py_trees.logging.Level.DEBUG
+        
     if verbose:
         print("Step: 0")
         visualize(e, full=False)

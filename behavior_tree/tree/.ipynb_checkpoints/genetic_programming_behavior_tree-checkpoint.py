@@ -42,8 +42,8 @@ class SafetyCondition(py_trees.behaviour.Behaviour):
     def update(self):
         """trigger safety act when speed is very low"""
         if self.blackboard.speed <= MIN_SAFETY_SPEED:
-            return py_trees.common.Status.SUCCESS
-        return py_trees.common.Status.FAILURE
+            return py_trees.common.Status.FAILURE
+        return py_trees.common.Status.SUCCESS
         
 
 class SafetyAct(py_trees.behaviour.Behaviour):
@@ -63,12 +63,14 @@ class LearnAct(py_trees.behaviour.Behaviour):
     def __init__(self, name):
         super().__init__(name)
         self.blackboard = self.attach_blackboard_client(name=self.name)
+        self.blackboard.register_key("enable_learning", access=py_trees.common.Access.READ)
         self.blackboard.register_key("action", access=py_trees.common.Access.WRITE)
         
     def update(self):
-        if ENABLE_LEARNING:
+        if self.blackboard.enable_learning:
             self.blackboard.action = ACT_LEARN
             return py_trees.common.Status.SUCCESS
+        self.blackboard.action = ACT_NOACTION
         return py_trees.common.Status.FAILURE
 
 
@@ -80,12 +82,12 @@ class CustomActionNode(py_trees.behaviour.Behaviour):
     
     def update(self):
         self.blackboard.action = self.name
-        return py_tree.common.Status.SUCCESS
+        return py_trees.common.Status.SUCCESS
 
 
 def create_safety_node():
     """SafetyNode composes of Safety Condition and Safety Act leaves"""
-    node = py_trees.composites.Sequence(name="SafetyNode")
+    node = py_trees.composites.Selector(name="SafetyNode")
     node.add_child(SafetyCondition(name='SafetyCond'))
     node.add_child(SafetyAct(name='SafetyAct'))
     return node
@@ -93,7 +95,7 @@ def create_safety_node():
 
 def create_initial_root():
     """Initial root includes a Selector of SafetyNode and LearnNode"""
-    init_root = py_trees.composites.Selector(name="InitRoot")
+    init_root = py_trees.composites.Sequence(name="InitRoot")
     init_root.add_child(create_safety_node())
     init_root.add_child(LearnAct(name='LearnAct'))
     return init_root
@@ -148,6 +150,7 @@ def GeneticProgrammingBehaviorTree():
     root.blackboard.register_key("action", access=py_trees.common.Access.READ)
     root.blackboard.register_key("speed", access=py_trees.common.Access.WRITE)
     root.blackboard.register_key("cell_condition", access=py_trees.common.Access.WRITE)
+    root.blackboard.register_key("enable_learning", access=py_trees.common.Access.WRITE)
     root.blackboard.cell_condition = {}
     
     tree = py_trees.trees.BehaviourTree(root)

@@ -14,6 +14,10 @@ class BasicConditionChecker(ConditionChecker):
             return False
         return True
     
+    def can_decelerate(self):
+        """Conditions lead to [acceleration], not implemented"""
+        return True
+    
     def can_switch_left(self):
         """Conditions lead to [switching to left lane]"""
         # not in the leftmost lane
