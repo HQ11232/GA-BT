@@ -1,6 +1,6 @@
 from config import *
 
-class ConditionChecker:
+class ConditionChecker(object):
     """Class for check conditions which trigger BT leaf nodes"""
     def __init__(self):
         self.car_length = 4  # from deepTraffic setting

@@ -11,8 +11,8 @@ def train_GP_BT(e, agent, episodes=TRAIN_EPISODES, steps=PLAY_EPISODE_STEPS):
     action_to_situation_dict = dict() 
     
     for episode in range(episodes):
-        logging.info("Episode {}/{}".format(episode+1, episodes))
         # initialize
+        logging.info("Episode {}/{}".format(episode+1, episodes))
         state = e.reset()
         agent.setup()
         
@@ -22,7 +22,7 @@ def train_GP_BT(e, agent, episodes=TRAIN_EPISODES, steps=PLAY_EPISODE_STEPS):
             # tick
             action = agent.tick(state[0])
             
-            # apply action
+            # learn action invoked
             if action == ACT_LEARN:
                 logging.info("step {}/{}: Learn Action triggered".format(step+1, steps))
                 # disable learning
@@ -51,42 +51,29 @@ def train_GP_BT(e, agent, episodes=TRAIN_EPISODES, steps=PLAY_EPISODE_STEPS):
                     agent.append_learned_action(situation_node, action_node)
                     action_to_situation_dict[action_node_key] = situation_node.name
                     logging.info("step {}/{}: new action sets, appended as a new Behavior".format(step+1, steps))
-                
-            else:
-                act_idx = ACT_TO_ACTIDX[action]
-                state, reward, _, _ = e.step(act_idx)
-                
+                                  
+            # tick without learning
+            action = agent.tick(state[0])
+            act_idx = ACT_TO_ACTIDX[action]
+            state, reward, _, _ = e.step(act_idx)
+
+
+def train_GP_BT_v2(e, agent, episodes=TRAIN_EPISODES, steps=PLAY_EPISODE_STEPS):
+    pass
+
 
 def learn_single_action(e, agent, steps=TRY_ACTION_STEPS, samples=TRY_ACTION_SAMPLES):
     # sample baseline score (NoAction)
-    baseline_score = []
-    for sample in range(samples):
-        # deep copy env
-        e_ = copy.deepcopy(e)
-        # simulate, calculate score in Monte-Carlo fashion
-        mean_speed = play_episode(e_, agent, steps=steps, reset=False)
-        baseline_score.append(mean_speed)
-    avg_baseline_score = np.mean(baseline_score)
-    std_baseline_score = np.std(baseline_score)
+    baseline_score = fitness_score(e, agent, steps=steps, samples=samples)
     
     # total score for each action
     action_score = dict()
     # try each action for multiple episodes
     available_actions = find_available_action(e, agent)
     for action in available_actions:
-        act_score = []
-        for sample in range(samples):
-            # deep copy env
-            e_ = copy.deepcopy(e)
-            # try action
-            _ = e_.step(ACT_TO_ACTIDX[action])
-            # simulate, calculate score in Monte-Carlo fashion
-            mean_speed = play_episode(e_, agent, steps=steps, reset=False)
-            act_score.append(mean_speed)
-        avg_act_score = np.mean(mean_speed)
-        
-        if avg_act_score > avg_baseline_score + std_baseline_score:
-            action_score[action] = act_score
+        score = fitness_score(e, agent, steps=steps, samples=samples, action=action)
+        if score > baseline_score:
+            action_score[action] = score
 
     action_list = [key for key, value in sorted(action_score.items(), key=lambda item: item[1], reverse=True)]
     action_node = ActionSelectorNode(action_list)
@@ -112,7 +99,7 @@ def find_available_action(e, agent):
     # update condition checker
     agent.update_condition_checker(state)
     # check for available actions
-    available_actions = []
+    available_actions = [ACT_NOACTION]
     if agent.condition_checker.can_accelerate():
         available_actions.append(ACT_ACCELERATE)
     if agent.condition_checker.can_decelerate():
@@ -122,3 +109,46 @@ def find_available_action(e, agent):
     if agent.condition_checker.can_switch_right():
         available_actions.append(ACT_SWITCHRIGHT)
     return available_actions
+
+
+def fitness_score(e, agent, steps=TRY_ACTION_STEPS, samples=TRY_ACTION_SAMPLES, action=ACT_NOACTION):
+    # initialize
+    score = []
+    
+    # simulation loops
+    for sample in range(samples):
+        # deep copy env
+        e_ = copy.deepcopy(e)
+        state = e_._render_state(e_.state)[0]
+        # initialize agent
+        agent.update_condition_checker(state)
+        agent.update_blackboard()
+        init_speed = agent.blackboard.speed
+        
+        # try action
+        if action == None:
+            action = agent.tick(state)
+        state, _, _, _ = e_.step(ACT_TO_ACTIDX[action])
+        agent.update_condition_checker(state[0])
+        agent.update_blackboard()
+        
+        # score for immediate availability
+        avail_score = 0
+        can_accelerate = agent.condition_checker.can_accelerate()
+        can_switch_left = agent.condition_checker.can_switch_left()
+        can_switch_right = agent.condition_checker.can_switch_right()
+        if can_accelerate:
+            avail_score += CAN_ACCELARATE_SCORE
+        if can_switch_left or can_switch_right:
+            avail_score += CAN_SWITCH_ONE_LANE
+        if can_switch_left and can_switch_right:
+            avail_score += CAN_SWITCH_TWO_LANES
+        
+        # simulate, calculate average speed across T steps
+        _ = play_episode(e_, agent, steps=steps, reset=False)
+        after_speed = agent.blackboard.speed
+        speed_score = after_speed - init_speed
+            
+        score.append(speed_score + avail_score)
+        
+    return np.mean(score)

@@ -45,7 +45,7 @@ def play_episode(e, agent, steps=PLAY_EPISODE_STEPS,
                 print("action change: {} -> {}".format(prev_action, action))
                 prev_action = action
                 time.sleep(change_act_sleep_time)
-            print(action, e.state.my_car.safe_speed, e.state.my_car.cell_x)
+            print(action, e.current_speed(), e.state.my_car.cell_x)
             print('Reward:', reward)
             visualize(e, full=False)
             print('*' * 50 + '\n')

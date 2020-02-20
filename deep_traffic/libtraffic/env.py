@@ -187,7 +187,7 @@ class TrafficState:
                 car.safe_speed = prev_car_speed // 2
             
             # [fixed] update car speed to safe_speed, only for agent
-            if car.is_agent:
+            if (car.is_agent) and (car.speed > car.safe_speed):
                 car.speed = car.safe_speed
             
             prev_car_ends = y + Car.Length
@@ -251,7 +251,8 @@ class TrafficState:
             for x, y in self._iterate_car_render_cells(car, full_state=render_full):
                 res[x, y] = dspeed
         # this shouldn't be filled or filled with zeros, but original deeptraffic env is buggy
-        dspeed = my_car.safe_speed / 2000
+        # [fixed] dspeed = min(my_car.speed, my_car.safe_speed)
+        dspeed = min(my_car.speed, my_car.safe_speed) / 2000
         for x, y in self._iterate_car_render_cells(my_car, full_state=render_full):
             res[x, y] = dspeed
 
@@ -271,7 +272,8 @@ class TrafficState:
         assert isinstance(cars, list)
 
         for car in cars:
-            dspeed = car.safe_speed - my_car.safe_speed
+            # [fixed] dspeed = car.safe_speed - min(my_car.speed, my_car.safe_speed) 
+            dspeed = car.safe_speed - min(my_car.speed, my_car.safe_speed) 
             car.shift_forward(dspeed)
 
     def _apply_action(self, car, action, other_cars):
@@ -440,7 +442,8 @@ class DeepTraffic(gym.Env):
         return obs, r, False, {}
 
     def current_speed(self):
-        return self.state.my_car.safe_speed
+        # [fixed] min(self.state.my_car.speed, self.state.my_car.safe_speed)
+        return min(self.state.my_car.speed, self.state.my_car.safe_speed)
 
     def close(self):
         pass
