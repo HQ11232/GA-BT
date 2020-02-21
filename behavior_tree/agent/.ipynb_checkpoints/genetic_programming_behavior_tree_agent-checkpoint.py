@@ -39,6 +39,11 @@ class GeneticProgrammingBehaviorTreeAgent(BehaviorTreeAgent):
         """update conditions on blackboard"""
         # agent's speed
         self.blackboard.speed = self.condition_checker.speed()
+        # avaialable actions
+#         self.blackboard.available_actions[ACT_ACCELERATE] = self.condition_checker.can_accelerate()
+#         self.blackboard.available_actions[ACT_DECELERATE] = self.condition_checker.can_decelerate()
+#         self.blackboard.available_actions[ACT_SWITCHLEFT] = self.condition_checker.can_switch_left()
+#         self.blackboard.available_actions[ACT_SWITCHRIGHT] = self.condition_checker.can_switch_right()
         # free_cells condition
         free_cells = self.condition_checker.free_cells()
         for index, free in enumerate(free_cells):

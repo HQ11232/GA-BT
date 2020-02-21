@@ -99,11 +99,11 @@ def find_available_action(e, agent):
     # update condition checker
     agent.update_condition_checker(state)
     # check for available actions
-    available_actions = [ACT_NOACTION]
+    available_actions = []
     if agent.condition_checker.can_accelerate():
         available_actions.append(ACT_ACCELERATE)
-    if agent.condition_checker.can_decelerate():
-        available_actions.append(ACT_DECELERATE)
+#     if agent.condition_checker.can_decelerate():
+#         available_actions.append(ACT_DECELERATE)
     if agent.condition_checker.can_switch_left():
         available_actions.append(ACT_SWITCHLEFT)
     if agent.condition_checker.can_switch_right():
@@ -132,23 +132,31 @@ def fitness_score(e, agent, steps=TRY_ACTION_STEPS, samples=TRY_ACTION_SAMPLES, 
         agent.update_condition_checker(state[0])
         agent.update_blackboard()
         
-        # score for immediate availability
+        # simulate
+        _ = play_episode(e_, agent, steps=steps, reset=False)
+        
+        # score for availability adter T steps
+        state = e_._render_state(e_.state)[0]
+        agent.update_condition_checker(state)
+        agent.update_blackboard()
+
         avail_score = 0
         can_accelerate = agent.condition_checker.can_accelerate()
         can_switch_left = agent.condition_checker.can_switch_left()
         can_switch_right = agent.condition_checker.can_switch_right()
         if can_accelerate:
             avail_score += CAN_ACCELARATE_SCORE
-        if can_switch_left or can_switch_right:
-            avail_score += CAN_SWITCH_ONE_LANE
-        if can_switch_left and can_switch_right:
-            avail_score += CAN_SWITCH_TWO_LANES
+        elif can_switch_left or can_switch_right:
+            avail_score += CAN_SWITCH_LANE
+        else:
+            pass
         
-        # simulate, calculate average speed across T steps
-        _ = play_episode(e_, agent, steps=steps, reset=False)
+        # speed score: speed difference
         after_speed = agent.blackboard.speed
-        speed_score = after_speed - init_speed
-            
+        #speed_score = after_speed - init_speed
+        speed_score = min(1, max(after_speed - init_speed, -1))
+        
+        #score.append(speed_score)
         score.append(speed_score + avail_score)
         
     return np.mean(score)

@@ -78,9 +78,14 @@ class CustomActionNode(py_trees.behaviour.Behaviour):
     def __init__(self, name):
         super().__init__(name)
         self.blackboard = self.attach_blackboard_client(name=self.name)
+        self.blackboard.register_key("available_actions", access=py_trees.common.Access.READ)
         self.blackboard.register_key("action", access=py_trees.common.Access.WRITE)
     
     def update(self):
+#         if self.blackboard.available_actions[self.name]:
+#             self.blackboard.action = self.name
+#             return py_trees.common.Status.SUCCESS
+#         return py_trees.common.Status.FAILURE
         self.blackboard.action = self.name
         return py_trees.common.Status.SUCCESS
 
@@ -149,8 +154,9 @@ def GeneticProgrammingBehaviorTree():
     root.blackboard = root.attach_blackboard_client(name="root")
     root.blackboard.register_key("action", access=py_trees.common.Access.READ)
     root.blackboard.register_key("speed", access=py_trees.common.Access.WRITE)
-    root.blackboard.register_key("cell_condition", access=py_trees.common.Access.WRITE)
+#    root.blackboard.register_key("available_actions", access=py_trees.common.Access.WRITE)
     root.blackboard.register_key("enable_learning", access=py_trees.common.Access.WRITE)
+    root.blackboard.register_key("cell_condition", access=py_trees.common.Access.WRITE)
     root.blackboard.cell_condition = {}
     
     tree = py_trees.trees.BehaviourTree(root)
