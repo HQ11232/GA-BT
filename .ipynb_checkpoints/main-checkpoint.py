@@ -1,9 +1,9 @@
 import argparse
 import torch
-from deep_traffic.libtraffic import env, model
-from behavior_tree.agent import BasicBehaviorTreeAgent
-from runner import play_episode
+from behavior_tree.agent import BasicBehaviorTreeAgent, GeneticProgrammingBehaviorTreeAgent
 from config import *
+from deep_traffic.libtraffic import env, model
+from runner import play_episode, measure_performance
 
 
 def main(args):
@@ -23,10 +23,16 @@ def main(args):
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         agent = model.DQN(e.obs_shape, e.action_space.n)
         agent.load_state_dict(torch.load(MODELPATH, map_location=device))
+        print("Pretrained model: %s" %(MODELPATH))
     
     # play episode
     mean_speed = play_episode(e, agent, agent_type=args.model, verbose=args.verbose, debug=args.debug)
-    print('Mean Speed:', mean_speed)
+    print('Mean Speed: %.2f mph' %(mean_speed))
+    
+    # measure performace by playing multiple episodes
+    performance = measure_performance(e, agent, agent_type=args.model, steps=PERFORMANCE_TEST_EPISODES, save=True)
+    print('Average Episodic mean speed: %.2f mph' %(performance['average_mean_speed']))
+    print('STD Episodic mean speed: %.2f mph' %(performance['std_mean_speed']))
 
 
 if __name__ == '__main__':

@@ -1,6 +1,6 @@
 from behavior_tree.agent import BehaviorTreeAgent
-from behavior_tree.tree import BasicBehaviorTree
 from behavior_tree.condition_checker import BasicConditionChecker
+from behavior_tree.tree import BasicBehaviorTree
 from config import *
 
 

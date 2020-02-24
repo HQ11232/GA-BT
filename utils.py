@@ -1,13 +1,6 @@
 # import sys
 # import numpy as np
 
-# # Only ask users to install matplotlib if they actually need it
-# try:
-#     import matplotlib.pyplot as plt
-# except:
-#     print('To display the environment in a window, please install matplotlib, eg:')
-#     print('pip3 install --user matplotlib')
-#     sys.exit(-1)
 
 # class Window:
 #     """
@@ -91,7 +84,7 @@
 
 
 def visualize(e, full=False):
-    """visualize traffic"""
+    """visualize traffic in ascii mode (terminal output)"""
     occ = e.state.render_occupancy(full=full)
     occ = list(occ)
     

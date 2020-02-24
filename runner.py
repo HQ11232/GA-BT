@@ -1,8 +1,10 @@
+import json
+import matplotlib.pyplot as plt
 import numpy as np
 import py_trees
-import torch
-import time
 import sys
+import time
+import torch
 from config import *
 from utils import visualize
 
@@ -60,3 +62,29 @@ def play_episode(e, agent, steps=PLAY_EPISODE_STEPS, agent_type='GP-BT',
             sys.stdout.flush()
     
     return np.mean(speed_hist)
+
+
+def measure_performance(e, agent, episodes=PERFORMANCE_TEST_EPISODES, steps=PLAY_EPISODE_STEPS,
+                        agent_type='GP-BT', save=False):
+    """run for multiple episodes, return avg and std of episodic mean speed"""
+    mean_speed = []
+    for episode in range(episodes):
+        mean_speed.append(play_episode(e, agent, steps=steps, agent_type=agent_type, verbose=False, debug=False))
+
+    performance = {
+        'mean_speed': mean_speed,
+        'average_mean_speed': np.mean(mean_speed),
+        'std_mean_speed': np.std(mean_speed)
+    }
+   
+    plt.hist(mean_speed)
+    plt.xlabel("mph")
+    plt.title("Histogram of Episodic mean speed: %s %d episodes" %(agent_type, PERFORMANCE_TEST_EPISODES))
+    
+    if save:
+        plt.savefig(SAVEPATH + "hist_%s_%d" %(agent_type, PERFORMANCE_TEST_EPISODES))
+        with open(SAVEPATH + "performance__%s_%d.json" %(agent_type, PERFORMANCE_TEST_EPISODES), 'w') as f:
+            json.dump(performance, f)
+    
+    return performance
+        
