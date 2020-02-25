@@ -87,4 +87,3 @@ def measure_performance(e, agent, episodes=PERFORMANCE_TEST_EPISODES, steps=PLAY
             json.dump(performance, f)
     
     return performance
-        

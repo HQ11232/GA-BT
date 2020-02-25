@@ -35,10 +35,11 @@ ACT_TO_ACTIDX = {
 ACTIDX_TO_ACT = { 
     ACT_TO_ACTIDX[key]:key for key in ACT_TO_ACTIDX
 }
+BTMODELPATH = "saves/"
 
 
 # DQN
-MODELPATH = "deep_traffic/saves/BTconfig-BTconfig/best_72.95.dat"
+DQNMODELPATH = "deep_traffic/saves/BTconfig-BTconfig/best_72.95.dat"
 
 
 # Runner
@@ -51,7 +52,7 @@ SAVEPATH = "results/"
 
 
 # Train
-TRAIN_EPISODES = 10
+TRAIN_EPISODES = 30
 TRY_ACTION_STEPS = 10
 TRY_ACTION_SAMPLES = 5
 CAN_ACCELARATE_SCORE = 0.5

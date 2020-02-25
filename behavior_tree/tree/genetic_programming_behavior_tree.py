@@ -138,6 +138,27 @@ def IntersectConditionSequenceNode(new_node, existed_node):
     existed_node.children = new_children
     
     return existed_node
+
+
+def CustomNodeByName(name):
+    if 'T' in name:
+        return TrueFreeCellCondition(name=name[1:])
+    elif 'F' in name:
+        return FalseFreeCellCondition(name=name[1:])
+    elif 'Cond' in name\
+      or 'Behavior' in name:
+        return py_trees.composites.Sequence(name=name)
+    elif 'Selector' in name:
+        return py_trees.composites.Selector(name=name)
+    elif ACT_ACCELERATE in name\
+      or ACT_DECELERATE in name\
+      or ACT_SWITCHLEFT in name\
+      or ACT_SWITCHRIGHT in name:
+        return CustomActionNode(name=name)
+    elif 'InitRoot' in name:
+        return create_initial_root()
+    else:
+        raise ValueError("node name is unknown: %s" %(name))
     
     
 def GeneticProgrammingBehaviorTree():

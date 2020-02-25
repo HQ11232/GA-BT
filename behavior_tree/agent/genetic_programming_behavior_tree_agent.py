@@ -1,7 +1,9 @@
+import math
 import py_trees
 from behavior_tree.agent  import BehaviorTreeAgent
 from behavior_tree.condition_checker import GeneticProgrammingConditionChecker
-from behavior_tree.tree import GeneticProgrammingBehaviorTree, ConditionSequenceNode, IntersectConditionSequenceNode
+from behavior_tree.tree import GeneticProgrammingBehaviorTree, ConditionSequenceNode,\
+IntersectConditionSequenceNode, CustomNodeByName
 from config import *
 
 
@@ -87,6 +89,55 @@ class GeneticProgrammingBehaviorTreeAgent(BehaviorTreeAgent):
     
     def get_action(self):
         return self.blackboard.action
+    
+    def save(self, name='GP-BT.dat'):
+        with open(BTMODELPATH + name, 'w') as f:
+            f.write(py_trees.display.ascii_tree(self.tree.root))
+            print("Save model at %s" %(BTMODELPATH + name))
+        return
+    
+    def load(self, name='GP-BT.dat'):
+        try:
+            with open(BTMODELPATH + name, 'r') as f:
+                lines = f.read()
+            print("Load model from %s" %(BTMODELPATH + name))
+        except FileNotFoundError:
+            print("File not found. Resort to default.")
+            return
+        
+        root = py_trees.composites.Selector(name='root')
+        frontier = {0: root}  # depth: last node
+        current_depth = 0
+
+        for line in lines.split('\n')[1:]:
+            # skip blank line
+            if len(line) == 0:
+                continue
+            # extract information
+            depth = math.floor(line.count(' ') / 4)
+            name = line.split()[-1]
+            # add new node
+            try:
+                new_node = CustomNodeByName(name)
+            except ValueError:
+                continue
+            frontier[depth-1].add_child(new_node)
+            # update
+            frontier[depth] = new_node
+            current_depth = depth
+        
+        # blackboard
+        root.blackboard = root.attach_blackboard_client(name="root")
+        root.blackboard.register_key("action", access=py_trees.common.Access.READ)
+        root.blackboard.register_key("speed", access=py_trees.common.Access.WRITE)
+        root.blackboard.register_key("available_actions", access=py_trees.common.Access.WRITE)
+        root.blackboard.register_key("enable_learning", access=py_trees.common.Access.WRITE)
+        root.blackboard.register_key("cell_condition", access=py_trees.common.Access.WRITE)
+        root.blackboard.available_actions = {}
+        root.blackboard.cell_condition = {}
+        
+        self.tree = py_trees.trees.BehaviourTree(root)
+        return
 
     @property
     def blackboard(self):

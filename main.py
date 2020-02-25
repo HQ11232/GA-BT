@@ -18,12 +18,14 @@ def main(args):
     if args.model == 'BT':
         agent = BasicBehaviorTreeAgent()
     elif args.model == 'GP-BT':
-        agent = BasicBehaviorTreeAgent()
+        agent = GeneticProgrammingBehaviorTreeAgent()
+        agent.load()
+        agent.blackboard.enable_learning = False
     else:
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         agent = model.DQN(e.obs_shape, e.action_space.n)
-        agent.load_state_dict(torch.load(MODELPATH, map_location=device))
-        print("Pretrained model: %s" %(MODELPATH))
+        agent.load_state_dict(torch.load(DQNMODELPATH, map_location=device))
+        print("Pretrained model: %s" %(DQNMODELPATH))
     
     # play episode
     mean_speed = play_episode(e, agent, agent_type=args.model, verbose=args.verbose, debug=args.debug)
