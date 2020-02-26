@@ -89,8 +89,9 @@ class TrafficState:
     """
     # Amount of cells we keep in front of us
     Safety_front = 4
-
-    def __init__(self, width_lanes=7, height_cells=70, cars=20, history=0, init_speed_my=80, init_speed_others=65,
+    
+    # [fixed] car = 20 -> car = 10
+    def __init__(self, width_lanes=7, height_cells=70, cars=10, history=0, init_speed_my=80, init_speed_others=65,
                  other_cars_action_prob=0.1, state_render_view=None):
         """
         Construct internal DeepTraffic model

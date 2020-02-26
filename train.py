@@ -160,3 +160,7 @@ def fitness_score(e, agent, steps=TRY_ACTION_STEPS, samples=TRY_ACTION_SAMPLES, 
         score.append(speed_score + avail_score)
         
     return np.mean(score)
+
+
+if __name__ == "__main__":
+    pass
