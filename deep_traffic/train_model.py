@@ -1,17 +1,16 @@
 #!/usr/bin/env python3
 import argparse
 import logging
-
-import sys
-import ptan
 import pathlib
-import numpy as np
-import gym.wrappers
-from tensorboardX import SummaryWriter
-from libtraffic import env, utils, model, config
+import sys
 
+import gym.wrappers
+import numpy as np
+import ptan
 import torch
 import torch.optim as optim
+from libtraffic import env, utils, model, config
+from tensorboardX import SummaryWriter
 
 log = logging.getLogger("train_model")
 

@@ -2,11 +2,9 @@
 import argparse
 import logging
 
-import pathlib
 import numpy as np
-from libtraffic import env, utils, model, config
-
 import torch
+from libtraffic import env, utils, model, config
 
 log = logging.getLogger("model_play")
 
@@ -59,4 +57,3 @@ if __name__ == "__main__":
     log.info("Model loaded from %s", args.model)
     mean_speed = play_episode(e, net, steps=args.steps, verbose=args.verbose)
     log.info("Mean speed is %.3f", mean_speed)
-

@@ -1,6 +1,6 @@
+import numpy as np
 import torch
 import torch.nn as nn
-import numpy as np
 
 
 class DQN(nn.Module):
@@ -62,7 +62,7 @@ def unpack_batch(batch):
         rewards.append(exp.reward)
         dones.append(exp.last_state is None)
         if exp.last_state is None:
-            last_states.append(state)       # the result will be masked anyway
+            last_states.append(state)  # the result will be masked anyway
         else:
             last_states.append(np.array(exp.last_state, copy=False))
     return np.array(states, copy=False), np.array(actions), np.array(rewards, dtype=np.float32), \

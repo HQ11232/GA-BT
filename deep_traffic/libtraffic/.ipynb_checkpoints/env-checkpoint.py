@@ -1,9 +1,10 @@
-import gym
-from gym import spaces
+import collections
 import enum
 import random
-import collections
+
+import gym
 import numpy as np
+from gym import spaces
 
 
 class Actions(enum.Enum):
@@ -19,7 +20,7 @@ class Actions(enum.Enum):
 class Car:
     Length = 4
     Cell = 10
-    MaxSpeed = 120 # 80
+    MaxSpeed = 120  # 80
     SpeedUnitsPerPos = 5
 
     def __init__(self, speed, cell_x, cell_y, is_agent=False):
@@ -66,7 +67,7 @@ class Car:
         self.pos_y -= rel_speed // Car.SpeedUnitsPerPos
 
     def is_inside(self, y_cells):
-        return 0 <= self.cell_y <= (y_cells-self.Length)
+        return 0 <= self.cell_y <= (y_cells - self.Length)
 
     def accelerate(self, delta=1):
         new_speed = self.speed + delta
@@ -89,9 +90,9 @@ class TrafficState:
     """
     # Amount of cells we keep in front of us
     Safety_front = 4
-    
+
     # [fixed] car = 20 -> car = 10
-    def __init__(self, width_lanes=7, height_cells=70, cars=10, history=0, init_speed_my=80, init_speed_others=65,
+    def __init__(self, width_lanes=7, height_cells=70, cars=20, history=0, init_speed_my=80, init_speed_others=65,
                  other_cars_action_prob=0.1, state_render_view=None):
         """
         Construct internal DeepTraffic model
@@ -112,7 +113,7 @@ class TrafficState:
         self.other_cars_action_prob = other_cars_action_prob
         self.state_render_view = state_render_view
 
-        self.my_car = Car(init_speed_my, (width_lanes-1)//2, 2*height_cells//3, is_agent=True)
+        self.my_car = Car(init_speed_my, (width_lanes - 1) // 2, 2 * height_cells // 3, is_agent=True)
         self.cars = self._make_cars_initial(cars)
         self._update_safe_speed(self.my_car, self.cars)
         self.state = self._render_state(self.my_car, self.cars)
@@ -137,7 +138,7 @@ class TrafficState:
 
     def _make_car_new(self):
         positions = []
-        for y in [0, self.height_cells-Car.Length]:
+        for y in [0, self.height_cells - Car.Length]:
             for x in range(self.width_lanes):
                 positions.append((x, y))
 
@@ -186,18 +187,18 @@ class TrafficState:
                 car.safe_speed = prev_car_speed
             else:
                 car.safe_speed = prev_car_speed // 2
-            
+
             # [fixed] update car speed to safe_speed, only for agent
             if (car.is_agent) and (car.speed > car.safe_speed):
                 car.speed = car.safe_speed
-            
+
             prev_car_ends = y + Car.Length
             prev_car_speed = car.safe_speed
 
     def _iterate_car_render_cells(self, car, full_state=False):
         if full_state or self.state_render_view is None:
             for d in range(Car.Length):
-                yield (car.cell_x, car.cell_y+d)
+                yield (car.cell_x, car.cell_y + d)
         else:
             # need to remap coords
             render_lanes, render_before, render_behind = self.state_render_view
@@ -231,7 +232,7 @@ class TrafficState:
         if full_state or self.state_render_view is None:
             return self.width_lanes, self.height_cells
         else:
-            return self.state_render_view[0]*2+1, self.state_render_view[1]+self.state_render_view[2]
+            return self.state_render_view[0] * 2 + 1, self.state_render_view[1] + self.state_render_view[2]
 
     def _render_state(self, my_car, cars, render_full=False):
         """
@@ -247,7 +248,7 @@ class TrafficState:
             res[lane, :] = 1.0
         for car in cars:
             # see https://github.com/lexfridman/deeptraffic/issues/7
-            #dspeed = abs(car.safe_speed - my_car.safe_speed) / 1000
+            # dspeed = abs(car.safe_speed - my_car.safe_speed) / 1000
             dspeed = car.safe_speed / 2000
             for x, y in self._iterate_car_render_cells(car, full_state=render_full):
                 res[x, y] = dspeed
@@ -274,7 +275,7 @@ class TrafficState:
 
         for car in cars:
             # [fixed] dspeed = car.safe_speed - min(my_car.speed, my_car.safe_speed) 
-            dspeed = car.safe_speed - min(my_car.speed, my_car.safe_speed) 
+            dspeed = car.safe_speed - min(my_car.speed, my_car.safe_speed)
             car.shift_forward(dspeed)
 
     def _apply_action(self, car, action, other_cars):
@@ -302,7 +303,7 @@ class TrafficState:
             return
         # check the safety system
         min_y = car.cell_y - 6
-        max_y = car.cell_y + car.Length + int(round((car.pos_y % 10)/10))
+        max_y = car.cell_y + car.Length + int(round((car.pos_y % 10) / 10))
         for c in other_cars:
             if c.cell_x == new_x and c.overlaps_range(min_y, max_y):
                 return
@@ -314,7 +315,7 @@ class TrafficState:
         actions = [Actions.accelerate, Actions.decelerate, Actions.goLeft, Actions.goRight]
         action = random.choice(actions)
         car = random.choice(cars)
-#        print("%s will do %s" % (car, action))
+        #        print("%s will do %s" % (car, action))
         self._apply_action(car, action, cars + [self.my_car])
 
     def tick(self, action=Actions.noAction):
@@ -385,12 +386,12 @@ class DeepTraffic(gym.Env):
         self.patches_behind = patches_behind
         if obs == 'conv':
             # observations stack are current state, history of states and history of one-hot encoded actions
-            self.obs_shape = (history + 1 + len(Actions)*history, lanes_side*2 + 1, patches_ahead + patches_behind)
+            self.obs_shape = (history + 1 + len(Actions) * history, lanes_side * 2 + 1, patches_ahead + patches_behind)
             self.observation_space = spaces.Box(low=-Car.MaxSpeed, high=Car.MaxSpeed,
                                                 shape=self.obs_shape, dtype=np.float32)
         elif obs == 'js':
-            num_input = (lanes_side*2 + 1) * (patches_ahead + patches_behind)
-            self.obs_shape = (num_input * history + len(Actions) * history + num_input, )
+            num_input = (lanes_side * 2 + 1) * (patches_ahead + patches_behind)
+            self.obs_shape = (num_input * history + len(Actions) * history + num_input,)
         else:
             raise ValueError("Wrong value passed in obs param")
         self.obs_kind = obs

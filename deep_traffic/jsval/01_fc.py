@@ -1,6 +1,7 @@
 # simple 1-layer FC net
 import os
 import sys
+
 sys.path.append(os.getcwd())
 sys.path.append(os.getcwd() + "/..")
 
@@ -9,7 +10,6 @@ import torch
 import torch.nn as nn
 
 from libtraffic import js
-
 
 if __name__ == "__main__":
     torch.random.manual_seed(123)

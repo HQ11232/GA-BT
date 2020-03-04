@@ -3,10 +3,9 @@ import argparse
 import json
 
 import numpy as np
-from libtraffic import env, model, config
-
 import torch
 import torch.nn as nn
+from libtraffic import env, model, config
 
 
 def norm_float(v):

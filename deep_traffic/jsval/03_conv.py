@@ -1,6 +1,7 @@
 # simple 1-layer FC net
 import os
 import sys
+
 sys.path.append(os.getcwd())
 sys.path.append(os.getcwd() + "/..")
 
@@ -10,7 +11,6 @@ import torch.nn as nn
 
 from libtraffic import js
 
-
 if __name__ == "__main__":
     torch.random.manual_seed(123)
     net = nn.Sequential(
@@ -18,7 +18,7 @@ if __name__ == "__main__":
         nn.ReLU(),
     )
     reg_net = nn.Sequential(
-        nn.Linear(in_features=5*1*1, out_features=6)
+        nn.Linear(in_features=5 * 1 * 1, out_features=6)
     )
     full_net = lambda x: reg_net(net(x).view(x.size()[0], -1))
     print(net)

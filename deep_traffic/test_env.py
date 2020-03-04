@@ -1,8 +1,7 @@
 import random
 import unittest
-import numpy as np
-import pprint
 
+import numpy as np
 from libtraffic import env
 
 
@@ -73,7 +72,7 @@ class TestTrafficState(unittest.TestCase):
         np.testing.assert_array_almost_equal(s, [
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.0075, 0.0075, 0.0075, 0.0075, 1, 1, 1, 1, 1, 1],
             [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0.0025, 0.0025, 0.0025, 0.0025, 1, 1, 1, 1, 1, 1],
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  1,  1,  1,  1,  1,  1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         ])
 
     def test_update_safe_speed(self):
@@ -116,8 +115,8 @@ class TestTrafficState(unittest.TestCase):
         s = ts._render_state(my_car, [c1])
         np.testing.assert_array_almost_equal(s, [
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.0075, 0.0075, 0.0075, 0.0075, 1, 1, 1, 1, 1, 1],
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.0025, 0.0025, 0.0025, 0.0025,  1,  1, 1, 1, 1, 1],
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  1,  1,  1,  1,  1,  1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.0025, 0.0025, 0.0025, 0.0025, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         ])
 
         ts._apply_action(c1, env.Actions.accelerate, [my_car])
@@ -125,9 +124,9 @@ class TestTrafficState(unittest.TestCase):
         ts._update_safe_speed(my_car, [c1])
         s = ts._render_state(my_car, [c1])
         np.testing.assert_array_almost_equal(s, [
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.008 , 0.008 , 0.008 , 0.008 , 1, 1, 1, 1, 1, 1],
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.0025, 0.0025, 0.0025, 0.0025,  1,  1, 1, 1, 1, 1],
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  1,  1,  1,  1,  1,  1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.008, 0.008, 0.008, 0.008, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.0025, 0.0025, 0.0025, 0.0025, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         ])
 
         # should be ignored - central car is on the way
@@ -135,9 +134,9 @@ class TestTrafficState(unittest.TestCase):
         self.assertEqual(c1.cell_x, 0)
         s = ts._render_state(my_car, [c1])
         np.testing.assert_array_almost_equal(s, [
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.008 , 0.008 , 0.008 , 0.008 , 1, 1, 1, 1, 1, 1],
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.0025, 0.0025, 0.0025, 0.0025,  1,  1, 1, 1, 1, 1],
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  1,  1,  1,  1,  1,  1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.008, 0.008, 0.008, 0.008, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.0025, 0.0025, 0.0025, 0.0025, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         ])
 
         # move central car to the right
@@ -145,9 +144,9 @@ class TestTrafficState(unittest.TestCase):
         self.assertEqual(my_car.cell_x, 2)
         s = ts._render_state(my_car, [c1])
         np.testing.assert_array_almost_equal(s, [
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.008 , 0.008 , 0.008 , 0.008, 1, 1, 1, 1, 1, 1],
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  1,  1,  1,  1,  1, 1, 1, 1, 1],
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.0025, 0.0025, 0.0025, 0.0025, 1,  1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.008, 0.008, 0.008, 0.008, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.0025, 0.0025, 0.0025, 0.0025, 1, 1, 1, 1, 1, 1],
         ])
 
         # should now change lanes
@@ -155,8 +154,8 @@ class TestTrafficState(unittest.TestCase):
         self.assertEqual(c1.cell_x, 1)
         s = ts._render_state(my_car, [c1])
         np.testing.assert_array_almost_equal(s, [
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  1,  1,  1,  1,  1,  1, 1, 1, 1, 1],
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.008 , 0.008 , 0.008 , 0.008, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.008, 0.008, 0.008, 0.008, 1, 1, 1, 1, 1, 1],
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.0025, 0.0025, 0.0025, 0.0025, 1, 1, 1, 1, 1, 1],
         ])
 
@@ -232,16 +231,17 @@ class TestTrafficState(unittest.TestCase):
                 #     pprint.pprint(history, fd)
                 assert False
             ts.tick()
-#            history.append(ts.snapshot())
+
+    #            history.append(ts.snapshot())
 
     def test_render(self):
         random.seed(10)
         ts = env.TrafficState(state_render_view=(1, 10, 5))
         self.assertEqual(ts.state.shape, (3, 15))
         np.testing.assert_array_almost_equal(ts.state, [
-            [0.0325, 1, 1, 1, 1, 1, 1, 1, 1,   1,   1,   1,   1, 1, 1],
-            [  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.04, 0.04, 0.04, 0.04, 1],
-            [  1, 1, 1, 1, 1, 1, 1, 1, 1, 0.0325, 0.0325, 0.0325, 0.0325, 1, 1],
+            [0.0325, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.04, 0.04, 0.04, 0.04, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 0.0325, 0.0325, 0.0325, 0.0325, 1, 1],
         ])
         ts.tick(env.Actions.goLeft)
         np.testing.assert_array_almost_equal(ts.state, [
@@ -276,6 +276,7 @@ class TestDeepTraffic(unittest.TestCase):
         np.testing.assert_array_equal(r[10:14], 0.0)
         np.testing.assert_array_equal(r[14], 1.0)
         np.testing.assert_array_equal(r[15:19], 0.0)
+
 
 if __name__ == '__main__':
     unittest.main()
